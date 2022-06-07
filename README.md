@@ -3,7 +3,7 @@
 
 ※ 「動画ファイルを入力すると写っている人の目線を推定した結果を動画上に描画する処理」をプログラムを1行もかかずに実現する
 
-## 環境設定
+## 環境設定・インストール
 
 Ubuntu-20.04LTSを想定している
 
@@ -12,10 +12,13 @@ Ubuntu-20.04LTSを想定している
 ```
 # 1. CMakeのインストール
 sudo apt install cmake
+
 # 2. Python 開発環境のインストール (3.9の部分は自身の環境に合わせる)
 sudo apt install python3.9-dev
+
 # 3. ptgazeのインストール
 pip install ptgaze 
+
 # 4. protobuf がバージョン不一致でエラーになるのでダウングレード
 pip install -U protobuf~=3.20.0
 ```
@@ -32,9 +35,28 @@ pip install -U protobuf~=3.20.0
 - mpiifacegaze.yaml
 - mpiigaze.yaml
 
-書き換える箇所は、ファイル内の demo: の設定うち`show_bbox: false`を`show_bbox: true` にする
+書き換える箇所は、ファイル内の demo: の設定うち`show_bbox: true`を`show_bbox: false` にする
 
 具体例:
+
+```
+demo:
+  use_camera: true
+  display_on_screen: true
+  wait_time: 1
+  image_path: null
+  video_path: null
+  output_dir: null
+  output_file_extension: avi
+  head_pose_axis_length: 0.05
+  gaze_visualization_length: 0.05
+  show_bbox: true
+  show_head_pose: false
+  show_landmarks: false
+  show_normalized_image: false
+```
+
+を
 
 ```
 demo:
@@ -52,25 +74,7 @@ demo:
   show_landmarks: false
   show_normalized_image: false
 ```
-を
-
-```
-demo:
-  use_camera: true
-  display_on_screen: true
-  wait_time: 1
-  image_path: null
-  video_path: null
-  output_dir: null
-  output_file_extension: avi
-  head_pose_axis_length: 0.05
-  gaze_visualization_length: 0.05
-  show_bbox: true
-  show_head_pose: false
-  show_landmarks: false
-  show_normalized_image: false
- ```
-に
+に変更
 
 ## 使い方(ptgaze)
 
@@ -105,8 +109,13 @@ optional arguments:
 ## 動画を入力にして目線推定する処理の例
 
 ```
+# MPIIGaze Model を使用する場合
 $ ptgaze --mode mpiigaze --no-screen --video input.avi
+
+# MPIIFaceGaze Model を使用する場合
 $ ptgaze --mode mpiifacegaze --no-screen --video input.avi 
+
+# ETH-XGaze Model を使用する場合
 $ ptgaze --mode eth-xgaze --no-screen --video input.avi 
 ```
 
@@ -118,7 +127,7 @@ CUDAが設定されている場合は`--device cuda`オプションでGPU使用�
 $ ptgaze --device cuda --mode eth-xgaze --no-screen --video input.avi 
 ```
 
-いずれも outputs の中に目線推定された動画ファイルが作成される
+いずれも outputs の中に目線推定された動画ファイルが作成される(下記動画の水色の線が推定された視線)
 
 https://user-images.githubusercontent.com/91955493/172399342-7e97ebac-358b-434c-91d7-d7bb94b73696.mp4
 
